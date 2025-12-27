@@ -1,6 +1,15 @@
-import {readFile, writeFile} from "fs";
+import { read } from "fs";
+import fs from "fs/promises";
 
 const userArgs : string[] = process.argv.slice(2);
+
+type Task = {
+    id : number;
+    description : string;
+    status : "todo" | "in-progress" | "done" | "all";
+    createdAt : Date;
+    updatedAt : Date;
+}
 
 switch(userArgs[0]) {
 
@@ -13,52 +22,51 @@ switch(userArgs[0]) {
 
 }
 
-let numOfTasks = 0;
-let totalTasks : Task[] = [];
+async function readFile() : Promise<Task[]> {
 
-type Task = {
-    id : number;
-    description : string;
-    status : "todo" | "in-progress" | "done";
-    createdAt : Date;
-    updatedAt : Date;
+    
+    const response = await fs.readFile("index.json", "utf-8");
+    const data : Task[] = JSON.parse(response);
+    return data;
+
 }
 
-function addTask(task : string) { 
+async function setID() : Promise<number> {
 
-    numOfTasks++;
+    const numOfTasks = (await readFile()).length;
+    const id = numOfTasks > 0 ? numOfTasks + 1 : 1;
+    return id;
+
+}
+
+async function addTask(task : string) { 
 
     const newTask : Task = {
-        id : numOfTasks,
+        id : (await setID()),
         description : task,
         status : "todo",
         createdAt : new Date(),
         updatedAt : new Date()
     }
 
-    totalTasks.push(newTask);
-    
-    const JSONTask = JSON.stringify(totalTasks);
-    writeFile(`index.json`,JSONTask, (err) =>{ if (err instanceof Error) {
-        console.error(err.message);
-    } else {
-        console.log(`Task added successfully (ID: ${newTask.id})`);
-    }});
- 
+    const newTasklist : Task[] = [newTask,...await readFile()];
+
+    await fs.writeFile("index.json", JSON.stringify(newTasklist,null,2));
+
 }
 
 async function updateTask(id : number) {
 
-    const response = await fetch('index.json');
-    const data = await response.json();
-    console.log(data);
+}
+
+async function deleteTask(id : number) {
 
 }
 
-function deleteTask(id : number) {
+async function list(status : string) {
 
-}
-
-function list(status : string) {
+    switch (userArgs[1]) {
+        case "all" : console.log(await readFile()); break;
+    }
 
 }

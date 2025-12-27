@@ -1,0 +1,16 @@
+[
+  {
+    "id": 2,
+    "description": "Clean Dishes",
+    "status": "todo",
+    "createdAt": "2025-12-27T04:12:59.379Z",
+    "updatedAt": "2025-12-27T04:12:59.379Z"
+  },
+  {
+    "id": 1,
+    "description": "Grocery",
+    "status": "todo",
+    "createdAt": "2025-12-27T04:12:52.175Z",
+    "updatedAt": "2025-12-27T04:12:52.175Z"
+  }
+]
