@@ -84,9 +84,25 @@ async function deleteTask(id : number) {
 
 async function markAsDone(id : number) {
 
+    if (id < 1) {
+        throw new Error ("Please enter a valid id");
+    }
+
+    let currentTask = (await readFile());
+    currentTask[id-1].status = "done";
+    await fs.writeFile("index.json",JSON.stringify(currentTask,null,2));
+
 }
 
 async function markInProgress(id : number) {
+
+    if (id < 1) {
+        throw new Error ("Please enter a valid id");
+    }
+
+    let currentTask = (await readFile());
+    currentTask[id-1].status = "in-progress";
+    await fs.writeFile("index.json",JSON.stringify(currentTask,null,2));
     
 }
 
