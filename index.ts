@@ -1,4 +1,3 @@
-import { read } from "fs";
 import fs from "fs/promises";
 
 const userArgs : string[] = process.argv.slice(2);
@@ -49,7 +48,7 @@ async function addTask(task : string) {
         updatedAt : new Date()
     }
 
-    const newTasklist : Task[] = [newTask,...await readFile()];
+    const newTasklist : Task[] = [...await readFile(), newTask];
 
     await fs.writeFile("index.json", JSON.stringify(newTasklist,null,2));
 
@@ -57,10 +56,38 @@ async function addTask(task : string) {
 
 async function updateTask(id : number) {
 
+    if (id < 1) {
+
+        throw new Error("Please enter a valid id");
+    }
+
+    let currentTask = (await readFile())
+    currentTask[id - 1].description = userArgs[2];
+    await fs.writeFile("index.json",JSON.stringify(currentTask,null,2));
+
 }
 
 async function deleteTask(id : number) {
 
+    if (id < 1) {
+
+        throw new Error("Please enter a valid id");
+
+    }
+
+    let currentTask = (await readFile())
+    currentTask.splice(id-1,1);
+    currentTask.forEach((element,index) => {element.id = index + 1});
+    await fs.writeFile("index.json",JSON.stringify(currentTask,null,2));
+    
+}
+
+async function markAsDone(id : number) {
+
+}
+
+async function markInProgress(id : number) {
+    
 }
 
 async function list(status : string) {
