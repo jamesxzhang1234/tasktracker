@@ -5,7 +5,7 @@ const userArgs : string[] = process.argv.slice(2);
 type Task = {
     id : number;
     description : string;
-    status : "todo" | "in-progress" | "done" | "all";
+    status : "todo" | "in-progress" | "done";
     createdAt : Date;
     updatedAt : Date;
 }
@@ -16,8 +16,10 @@ switch(userArgs[0]) {
     case "update": updateTask(parseInt(userArgs[1])); break;
     case "delete": deleteTask(parseInt(userArgs[1])); break;
     case "list": list(userArgs[1]); break;
+    case "mark-in-progress" : markInProgress(parseInt(userArgs[1])); break;
+    case "mark-done" : markAsDone(parseInt(userArgs[1])); break;
+    case "clear" : clear(); break;
     default: console.log("Invalid command"); break;
-
 
 }
 
@@ -82,6 +84,12 @@ async function deleteTask(id : number) {
     
 }
 
+async function clear() {
+
+    await fs.writeFile("index.json", JSON.stringify([],null,2));
+
+}
+
 async function markAsDone(id : number) {
 
     if (id < 1) {
@@ -108,8 +116,28 @@ async function markInProgress(id : number) {
 
 async function list(status : string) {
 
-    switch (userArgs[1]) {
-        case "all" : console.log(await readFile()); break;
+    let sortedArray : Task[] = []
+
+    switch (status) { 
+        case "todo" :
+            
+        (await readFile()).forEach((element) => {element.status === "todo" ? sortedArray.push(element) : null});
+        console.log(sortedArray);
+        break;
+
+        case "in-progress" :
+
+        (await readFile()).forEach((element) => {element.status === "in-progress" ? sortedArray.push(element) : null});
+        console.log(sortedArray);
+        break;
+
+        case "done" :
+
+        (await readFile()).forEach((element) => {element.status === "done" ? sortedArray.push(element) : null});
+        console.log(sortedArray);
+        break;
+
+        default : console.log(await readFile()); break;
     }
 
 }
